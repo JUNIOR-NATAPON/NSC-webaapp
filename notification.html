@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>Notifications</title>
+
+<link rel="stylesheet" href="css/notification.css">
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+<link rel="stylesheet"
+href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css">
+
+</head>
+
+<body>
+
+<div class="phone">
+
+<header>
+
+<a href="settings.html">
+<i class="fa-solid fa-arrow-left"></i>
+</a>
+
+<h2>Notifications</h2>
+
+<i class="fa-solid fa-bell"></i>
+
+</header>
+
+<div class="setting-card">
+
+<div class="switch-row">
+
+<div>
+
+<h3>Push Notifications</h3>
+<p>Receive important alerts</p>
+
+</div>
+
+<label class="switch">
+
+<input type="checkbox" id="pushToggle" checked>
+
+<span class="slider"></span>
+
+</label>
+
+</div>
+
+<div class="switch-row">
+
+<div>
+
+<h3>Email Notifications</h3>
+<p>Send reports to email</p>
+
+</div>
+
+<label class="switch">
+
+<input type="checkbox" id="emailToggle">
+
+<span class="slider"></span>
+
+</label>
+
+</div>
+
+</div>
+
+<div class="history">
+
+<h3>Recent Alerts</h3>
+
+<div id="notificationList">
+
+</div>
+
+</div>
+
+</div>
+
+<script src="js/notification.js"></script>
+
+</body>
+
+</html>

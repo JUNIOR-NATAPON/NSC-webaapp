@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>Turbidity Monitor</title>
+
+<link rel="stylesheet" href="css/turbidity.css">
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+<link rel="stylesheet"
+href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css">
+
+</head>
+
+<body>
+
+<div class="phone">
+
+<header>
+
+<a href="dashboard.html">
+<i class="fa-solid fa-arrow-left"></i>
+</a>
+
+<h2>Turbidity</h2>
+
+<i class="fa-solid fa-clock-rotate-left"></i>
+
+</header>
+
+<div class="gauge-card">
+
+<div class="gauge">
+
+<svg width="220" height="220">
+
+<circle
+cx="110"
+cy="110"
+r="90"
+class="bg"
+/>
+
+<circle
+cx="110"
+cy="110"
+r="90"
+class="progress"
+id="progressCircle"
+/>
+
+</svg>
+
+<div class="center">
+
+<h1 id="ntuValue">2.4</h1>
+
+<p>NTU</p>
+
+</div>
+
+</div>
+
+<span class="status good" id="statusText">
+Clean Water
+</span>
+
+</div>
+
+<div class="cards">
+
+<div class="info">
+
+<h3>Before Filter</h3>
+
+<p id="beforeNTU">8.6 NTU</p>
+
+</div>
+
+<div class="info">
+
+<h3>After Filter</h3>
+
+<p id="afterNTU">2.4 NTU</p>
+
+</div>
+
+<div class="info">
+
+<h3>Efficiency</h3>
+
+<p id="efficiency">72%</p>
+
+</div>
+
+<div class="info">
+
+<h3>Sensor Status</h3>
+
+<p class="online">Online</p>
+
+</div>
+
+</div>
+
+<button class="history-btn">
+
+<i class="fa-solid fa-clock"></i>
+
+View History
+
+</button>
+
+<nav>
+
+<a href="dashboard.html">
+
+<i class="fa-solid fa-house"></i>
+
+<span>Home</span>
+
+</a>
+
+<a class="active">
+
+<i class="fa-solid fa-droplet"></i>
+
+<span>NTU</span>
+
+</a>
+
+<a href="stats.html">
+
+<i class="fa-solid fa-chart-column"></i>
+
+<span>Stats</span>
+
+</a>
+
+<a href="settings.html">
+
+<i class="fa-solid fa-gear"></i>
+
+<span>Settings</span>
+
+</a>
+
+</nav>
+
+</div>
+
+<script src="js/turbidity.js"></script>
+
+</body>
+
+</html>

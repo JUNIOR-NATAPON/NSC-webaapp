@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>Device Management</title>
+
+<link rel="stylesheet" href="css/device.css">
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+<link rel="stylesheet"
+href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css">
+
+</head>
+
+<body>
+
+<div class="phone">
+
+<header>
+
+<a href="settings.html">
+<i class="fa-solid fa-arrow-left"></i>
+</a>
+
+<h2>Device</h2>
+
+<i class="fa-solid fa-rotate-right" id="refreshBtn"></i>
+
+</header>
+
+<div class="device-card">
+
+<i class="fa-solid fa-microchip chip"></i>
+
+<h2>ESP32 Water Monitor</h2>
+
+<p id="deviceStatus" class="online">
+
+● Connected
+
+</p>
+
+</div>
+
+<div class="grid">
+
+<div class="info">
+
+<h4>Device ID</h4>
+
+<p id="deviceID">ESP32-001</p>
+
+</div>
+
+<div class="info">
+
+<h4>Wi-Fi</h4>
+
+<p id="wifi">Connected</p>
+
+</div>
+
+<div class="info">
+
+<h4>IP Address</h4>
+
+<p id="ip">192.168.1.101</p>
+
+</div>
+
+<div class="info">
+
+<h4>Sensor</h4>
+
+<p id="sensor">Healthy</p>
+
+</div>
+
+<div class="info">
+
+<h4>Battery</h4>
+
+<p id="battery">100%</p>
+
+</div>
+
+<div class="info">
+
+<h4>Firmware</h4>
+
+<p>v1.0.0</p>
+
+</div>
+
+</div>
+
+<div class="actions">
+
+<button id="connectBtn">
+
+<i class="fa-solid fa-link"></i>
+
+Connect
+
+</button>
+
+<button id="disconnectBtn">
+
+<i class="fa-solid fa-link-slash"></i>
+
+Disconnect
+
+</button>
+
+</div>
+
+</div>
+
+<script src="js/device.js"></script>
+
+</body>
+
+</html>

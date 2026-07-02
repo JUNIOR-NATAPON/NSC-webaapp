@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>Statistics</title>
+
+<link rel="stylesheet" href="css/stats.css">
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+<link rel="stylesheet"
+href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css">
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+</head>
+
+<body>
+
+<div class="phone">
+
+<header>
+
+<a href="dashboard.html">
+<i class="fa-solid fa-arrow-left"></i>
+</a>
+
+<h2>Statistics</h2>
+
+<i class="fa-solid fa-calendar"></i>
+
+</header>
+
+<div class="summary">
+
+<div class="box">
+<h3>Average</h3>
+<h1 id="avg">2.8</h1>
+<p>NTU</p>
+</div>
+
+<div class="box">
+<h3>Highest</h3>
+<h1 id="max">5.4</h1>
+<p>NTU</p>
+</div>
+
+<div class="box">
+<h3>Lowest</h3>
+<h1 id="min">1.2</h1>
+<p>NTU</p>
+</div>
+
+</div>
+
+<div class="chart-card">
+
+<canvas id="ntuChart"></canvas>
+
+</div>
+
+<div class="history">
+
+<h3>Recent Readings</h3>
+
+<table>
+
+<thead>
+
+<tr>
+<th>Time</th>
+<th>NTU</th>
+<th>Status</th>
+</tr>
+
+</thead>
+
+<tbody id="historyTable">
+
+</tbody>
+
+</table>
+
+</div>
+
+<nav>
+
+<a href="dashboard.html">
+<i class="fa-solid fa-house"></i>
+<span>Home</span>
+</a>
+
+<a href="turbidity.html">
+<i class="fa-solid fa-droplet"></i>
+<span>NTU</span>
+</a>
+
+<a class="active">
+<i class="fa-solid fa-chart-line"></i>
+<span>Stats</span>
+</a>
+
+<a href="settings.html">
+<i class="fa-solid fa-gear"></i>
+<span>Settings</span>
+</a>
+
+</nav>
+
+</div>
+
+<script src="js/stats.js"></script>
+
+</body>
+
+</html>
