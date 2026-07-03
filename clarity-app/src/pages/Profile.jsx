@@ -3,9 +3,9 @@ import { Smartphone, User, Bell, ChevronRight, LogOut } from 'lucide-react'
 import Card from '../components/Card.jsx'
 
 const items = [
-  { label: 'Device', icon: Smartphone },
-  { label: 'Account', icon: User },
-  { label: 'Notification', icon: Bell }
+  { label: 'Device', icon: Smartphone, to: '/settings/device' },
+  { label: 'Account', icon: User, to: '/settings/account' },
+  { label: 'Notification', icon: Bell, to: '/settings/notification' }
 ]
 
 export default function Profile() {
@@ -23,9 +23,10 @@ export default function Profile() {
 
       <Card className="p-0 overflow-hidden">
         <p className="text-sm font-semibold px-5 pt-4 pb-2 text-muted">Setting</p>
-        {items.map(({ label, icon: Icon }, i) => (
+        {items.map(({ label, icon: Icon, to }, i) => (
           <button
             key={label}
+            onClick={() => navigate(to)}
             className={`w-full flex items-center justify-between px-5 py-4 text-sm font-medium hover:bg-surface transition-colors ${
               i !== items.length - 1 ? 'border-b border-black/5' : ''
             }`}

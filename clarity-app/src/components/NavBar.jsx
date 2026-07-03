@@ -3,22 +3,24 @@ import { Home, Database, Filter, User, Droplets } from 'lucide-react'
 
 const links = [
   { to: '/home', label: 'Home', icon: Home },
-  { to: '/data', label: 'Data', icon: Database },
+  { to: '/data', label: 'Data', icon: Database, matchPrefixes: ['/history'] },
   { to: '/filter', label: 'Filter', icon: Filter },
-  { to: '/profile', label: 'Profile', icon: User }
+  { to: '/profile', label: 'Profile', icon: User, matchPrefixes: ['/settings'] }
 ]
 
-function LinkItem({ to, label, icon: Icon, vertical }) {
+function LinkItem({ to, label, icon: Icon, vertical, matchPrefixes = [] }) {
   return (
     <NavLink
       to={to}
-      className={({ isActive }) =>
-        [
+      className={({ isActive }) => {
+        const path = window.location.pathname
+        const active = isActive || matchPrefixes.some((p) => path.startsWith(p))
+        return [
           'flex items-center gap-3 transition-colors',
           vertical
             ? 'flex-row w-full rounded-xl px-4 py-3 text-sm font-medium'
             : 'flex-col justify-center py-2 text-xs font-medium flex-1',
-          isActive
+          active
             ? vertical
               ? 'bg-brand-light text-brand'
               : 'text-brand'
@@ -26,7 +28,7 @@ function LinkItem({ to, label, icon: Icon, vertical }) {
             ? 'text-muted hover:bg-surface'
             : 'text-muted'
         ].join(' ')
-      }
+      }}
     >
       <Icon size={vertical ? 20 : 22} strokeWidth={2} />
       <span>{label}</span>
