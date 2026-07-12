@@ -11,11 +11,11 @@ const guide = [
 
 export default function Data() {
   return (
-    <div className="space-y-6 md:max-w-lg">
-      <h1 className="font-display font-bold text-xl">Current turbidity</h1>
+    <div className="space-y-6 md:max-w-lg lg:max-w-2xl">
+      <h1 className="font-display font-bold text-xl md:text-2xl lg:text-3xl">Current turbidity</h1>
 
       <Card className="text-center">
-        <p className="font-display font-extrabold text-6xl mb-1">0.3</p>
+        <p className="font-display font-extrabold text-6xl md:text-7xl lg:text-8xl mb-1">0.3</p>
         <p className="text-sm text-muted mb-3">NTU</p>
         <Badge tone="clean">Clean</Badge>
       </Card>

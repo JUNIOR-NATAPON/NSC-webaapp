@@ -18,12 +18,12 @@ export default function Notification() {
   }
 
   return (
-    <div className="space-y-6 md:max-w-lg">
+    <div className="space-y-6 md:max-w-lg lg:max-w-2xl">
       <div className="flex items-center gap-2">
         <button onClick={() => navigate('/profile')} aria-label="Back to profile">
           <ChevronLeft size={22} />
         </button>
-        <h1 className="font-display font-bold text-xl">Notification</h1>
+        <h1 className="font-display font-bold text-xl md:text-2xl lg:text-3xl">Notification</h1>
       </div>
 
       <Card className="p-0 overflow-hidden">
@@ -48,15 +48,11 @@ function Switch({ on, onClick }) {
     <button
       onClick={onClick}
       aria-pressed={on}
-      className={`h-7 w-12 rounded-full transition-colors relative shrink-0 ${
-        on ? 'bg-brand' : 'bg-black/15'
+      className={`h-7 w-12 rounded-full transition-colors shrink-0 flex items-center p-0.5 ${
+        on ? 'bg-brand justify-end' : 'bg-black/15 justify-start'
       }`}
     >
-      <span
-        className={`absolute top-0.5 h-6 w-6 bg-white rounded-full shadow transition-transform ${
-          on ? 'translate-x-[22px]' : 'translate-x-0.5'
-        }`}
-      />
+      <span className="h-6 w-6 bg-white rounded-full shadow transition-all" />
     </button>
   )
 }

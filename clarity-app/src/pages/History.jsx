@@ -1,6 +1,7 @@
 import { useNavigate } from 'react-router-dom'
 import { ChevronLeft } from 'lucide-react'
 import { BarChart, Bar, ResponsiveContainer, XAxis, Cell } from 'recharts'
+import useIsDesktop from '../hooks/useIsDesktop.js'
 import Card from '../components/Card.jsx'
 import StatBox from '../components/StatBox.jsx'
 import Badge from '../components/Badge.jsx'
@@ -26,14 +27,15 @@ const log = [
 
 export default function History() {
   const navigate = useNavigate()
+  const isDesktop = useIsDesktop()
 
   return (
-    <div className="space-y-6 md:max-w-lg">
+    <div className="space-y-6 md:max-w-lg lg:max-w-2xl">
       <div className="flex items-center gap-2">
         <button onClick={() => navigate('/data')} aria-label="Back to data">
           <ChevronLeft size={22} />
         </button>
-        <h1 className="font-display font-bold text-xl">Stats</h1>
+        <h1 className="font-display font-bold text-xl md:text-2xl lg:text-3xl">Stats</h1>
       </div>
 
       <Card>
@@ -42,10 +44,10 @@ export default function History() {
           <StatBox label="Best NTU" value="0.2" />
           <StatBox label="NTU Now" value="11.4" />
         </div>
-        <div className="h-40">
+        <div className="h-40 sm:h-52 md:h-64 lg:h-72">
           <ResponsiveContainer width="100%" height="100%">
             <BarChart data={chartData}>
-              <XAxis dataKey="name" tick={{ fontSize: 11, fill: '#6B7280' }} axisLine={false} tickLine={false} />
+              <XAxis dataKey="name" tick={{ fontSize: isDesktop ? 13 : 11, fill: '#6B7280' }} axisLine={false} tickLine={false} />
               <Bar dataKey="ntu" radius={[6, 6, 0, 0]}>
                 {chartData.map((d, i) => (
                   <Cell key={i} fill={colors[d.tone]} />
@@ -57,7 +59,7 @@ export default function History() {
       </Card>
 
       <Card>
-        <p className="text-sm font-semibold mb-4">Recent</p>
+        <p className="text-sm md:text-base font-semibold mb-4">Recent</p>
         <div className="space-y-3">
           {log.map((item, i) => (
             <div key={i} className="flex justify-between items-center">

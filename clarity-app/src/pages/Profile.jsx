@@ -1,5 +1,6 @@
 import { useNavigate } from 'react-router-dom'
 import { Smartphone, User, Bell, ChevronRight, LogOut } from 'lucide-react'
+import useIsDesktop from '../hooks/useIsDesktop.js'
 import Card from '../components/Card.jsx'
 
 const items = [
@@ -10,14 +11,15 @@ const items = [
 
 export default function Profile() {
   const navigate = useNavigate()
+  const isDesktop = useIsDesktop()
 
   return (
     <div className="space-y-6 md:max-w-md">
       <div className="flex flex-col items-center py-4">
-        <div className="h-24 w-24 rounded-full bg-ink flex items-center justify-center mb-3">
-          <User size={44} className="text-white" />
+        <div className="h-24 w-24 md:h-32 md:w-32 rounded-full bg-ink flex items-center justify-center mb-3">
+          <User size={isDesktop ? 56 : 44} className="text-white" />
         </div>
-        <h1 className="font-display font-bold text-xl">User</h1>
+        <h1 className="font-display font-bold text-xl md:text-2xl lg:text-3xl">User</h1>
         <p className="text-sm text-muted">********@email.com</p>
       </div>
 

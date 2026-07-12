@@ -6,12 +6,12 @@ export default function Account() {
   const navigate = useNavigate()
 
   return (
-    <div className="space-y-6 md:max-w-lg">
+    <div className="space-y-6 md:max-w-lg lg:max-w-2xl">
       <div className="flex items-center gap-2">
         <button onClick={() => navigate('/profile')} aria-label="Back to profile">
           <ChevronLeft size={22} />
         </button>
-        <h1 className="font-display font-bold text-xl">Account</h1>
+        <h1 className="font-display font-bold text-xl md:text-2xl lg:text-3xl">Account</h1>
       </div>
 
       <Card className="space-y-5">

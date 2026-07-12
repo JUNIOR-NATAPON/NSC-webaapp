@@ -10,8 +10,8 @@ const log = [
 
 export default function Filter() {
   return (
-    <div className="space-y-6 md:max-w-lg">
-      <h1 className="font-display font-bold text-xl">Status</h1>
+    <div className="space-y-6 md:max-w-lg lg:max-w-2xl">
+      <h1 className="font-display font-bold text-xl md:text-2xl lg:text-3xl">Status</h1>
 
       <Card>
         <div className="flex items-center justify-between">

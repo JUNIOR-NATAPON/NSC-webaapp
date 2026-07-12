@@ -1,4 +1,5 @@
 import { ResponsiveContainer, XAxis, Tooltip, Area, AreaChart } from 'recharts'
+import useIsDesktop from '../hooks/useIsDesktop.js'
 import Card from '../components/Card.jsx'
 import Badge from '../components/Badge.jsx'
 
@@ -19,31 +20,32 @@ function colorForValue(v) {
 }
 
 export default function Home() {
+  const isDesktop = useIsDesktop()
   return (
     <div className="space-y-6 md:grid md:grid-cols-2 md:gap-6 md:space-y-0">
       <div className="md:col-span-2">
-        <h1 className="font-display font-bold text-xl">Good Morning, User</h1>
+        <h1 className="font-display font-bold text-xl md:text-2xl lg:text-3xl">Good Morning, User</h1>
       </div>
 
       <Card>
         <div className="flex justify-between items-center mb-4">
           <div>
-            <p className="text-xs text-muted mb-1">NTU now</p>
-            <p className="font-display font-extrabold text-3xl">2.4</p>
+            <p className="text-xs md:text-sm text-muted mb-1">NTU now</p>
+            <p className="font-display font-extrabold text-3xl md:text-4xl lg:text-5xl">2.4</p>
           </div>
           <div className="text-right">
-            <p className="text-xs text-muted mb-1">After filter</p>
-            <p className="font-display font-extrabold text-3xl text-brand">0.3</p>
+            <p className="text-xs md:text-sm text-muted mb-1">After filter</p>
+            <p className="font-display font-extrabold text-3xl md:text-4xl lg:text-5xl text-brand">0.3</p>
           </div>
         </div>
         <div className="flex justify-between items-center">
-          <p className="text-sm text-muted">Before filter</p>
+          <p className="text-sm md:text-base text-muted">Before filter</p>
           <Badge tone="clean">Clean</Badge>
         </div>
       </Card>
 
       <Card>
-        <p className="text-sm font-semibold mb-3">Quick Status</p>
+        <p className="text-sm md:text-base font-semibold mb-3">Quick Status</p>
         <div className="space-y-3">
           <Row label="Filter 68% remaining" tone="clean" value="OK" />
           <Row label="Water Quality" tone="clean" value="Clean" />
@@ -52,13 +54,13 @@ export default function Home() {
 
       <Card className="md:col-span-2">
         <div className="flex items-center justify-between mb-1">
-          <p className="text-sm font-semibold">Today's NTU trend</p>
+          <p className="text-sm md:text-base font-semibold">Today's NTU trend</p>
           <Badge tone={trend[trend.length - 1].ntu <= 4 ? 'clean' : trend[trend.length - 1].ntu <= 10 ? 'warn' : 'danger'}>
             {trend[trend.length - 1].ntu <= 4 ? 'Clean' : trend[trend.length - 1].ntu <= 10 ? 'Moderate' : 'High'}
           </Badge>
         </div>
-        <p className="text-xs text-muted mb-4">After-filter readings, every 3 hours</p>
-        <div className="h-40">
+        <p className="text-xs md:text-sm text-muted mb-4">After-filter readings, every 3 hours</p>
+        <div className="h-40 sm:h-52 md:h-64 lg:h-72">
           <ResponsiveContainer width="100%" height="100%">
             <AreaChart data={trend} margin={{ top: 8, right: 4, left: 4, bottom: 0 }}>
               <defs>
@@ -85,7 +87,7 @@ export default function Home() {
               </defs>
               <XAxis
                 dataKey="time"
-                tick={{ fontSize: 11, fill: '#6B7280' }}
+                tick={{ fontSize: isDesktop ? 13 : 11, fill: '#6B7280' }}
                 axisLine={false}
                 tickLine={false}
               />
@@ -103,8 +105,8 @@ export default function Home() {
                 stroke="url(#lineColor)"
                 strokeWidth={2.5}
                 fill="url(#ntuFill)"
-                dot={<ColorDot />}
-                activeDot={{ r: 5 }}
+                dot={<ColorDot isDesktop={isDesktop} />}
+                activeDot={{ r: isDesktop ? 7 : 5 }}
               />
             </AreaChart>
           </ResponsiveContainer>
@@ -114,8 +116,8 @@ export default function Home() {
   )
 }
 
-function ColorDot({ cx, cy, payload }) {
-  return <circle cx={cx} cy={cy} r={3} fill={colorForValue(payload.ntu)} stroke="none" />
+function ColorDot({ cx, cy, payload, isDesktop }) {
+  return <circle cx={cx} cy={cy} r={isDesktop ? 4.5 : 3} fill={colorForValue(payload.ntu)} stroke="none" />
 }
 
 function Row({ label, value, tone }) {

@@ -10,7 +10,6 @@ body {
   @apply bg-surface text-ink font-body antialiased;
 }
 
-/* Keyboard focus visibility */
 :focus-visible {
   outline: 2px solid theme('colors.brand.DEFAULT');
   outline-offset: 2px;
@@ -22,4 +21,8 @@ body {
     animation-iteration-count: 1 !important;
     transition-duration: 0.01ms !important;
   }
+}
+
+html {
+  font-size: 112%;
 }

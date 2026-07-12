@@ -18,7 +18,7 @@ function AppShell({ children }) {
       <NavBar />
       <div className="flex-1 min-w-0">
         <TopBar />
-        <main className="max-w-4xl mx-auto px-5 py-6 pb-24 md:pb-10 md:px-10 md:py-10">
+        <main className="max-w-4xl lg:max-w-5xl mx-auto px-5 py-6 pb-24 md:pb-10 md:px-10 md:py-10 lg:px-14 lg:py-14">
           {children}
         </main>
       </div>
