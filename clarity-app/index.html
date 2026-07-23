@@ -13,5 +13,28 @@
   <body>
     <div id="root"></div>
     <script type="module" src="/src/main.jsx"></script>
+    <script type="module">
+  // Import the functions you need from the SDKs you need
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/12.16.0/firebase-app.js";
+  import { getAnalytics } from "https://www.gstatic.com/firebasejs/12.16.0/firebase-analytics.js";
+  // TODO: Add SDKs for Firebase products that you want to use
+  // https://firebase.google.com/docs/web/setup#available-libraries
+
+  // Your web app's Firebase configuration
+  // For Firebase JS SDK v7.20.0 and later, measurementId is optional
+  const firebaseConfig = {
+    apiKey: "AIzaSyAlq7PT1-3gwYAdCuKMzr3vFspPoQvnjqw",
+    authDomain: "waterclarity-edd51.firebaseapp.com",
+    projectId: "waterclarity-edd51",
+    storageBucket: "waterclarity-edd51.firebasestorage.app",
+    messagingSenderId: "240467741588",
+    appId: "1:240467741588:web:198ff2e0471dcf31399d81",
+    measurementId: "G-2RRPX7Q1MK"
+  };
+
+  // Initialize Firebase
+  const app = initializeApp(firebaseConfig);
+  const analytics = getAnalytics(app);
+</script>
   </body>
 </html>
