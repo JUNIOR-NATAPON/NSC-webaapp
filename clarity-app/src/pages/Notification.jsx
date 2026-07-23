@@ -1,20 +1,41 @@
+import { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { ChevronLeft } from 'lucide-react'
-import { useState } from 'react'
 import Card from '../components/Card.jsx'
+import { useAuth } from '../context/AuthContext.jsx'
+import { subscribeToUserProfile, updateNotificationSettings } from '../lib/firestore.js'
 
-const initial = [
-  { key: 'filterLow', label: 'Filter low alert', on: true },
-  { key: 'highNtu', label: 'High NTU alert', on: true },
-  { key: 'dailySummary', label: 'Daily summary', on: true }
-]
+const labels = {
+  filterLow: 'Filter low alert',
+  highNtu: 'High NTU alert',
+  dailySummary: 'Daily summary'
+}
+const defaultSettings = { filterLow: true, highNtu: true, dailySummary: true }
 
 export default function Notification() {
   const navigate = useNavigate()
-  const [toggles, setToggles] = useState(initial)
+  const { user } = useAuth()
+  const [settings, setSettings] = useState(defaultSettings)
+  const [saving, setSaving] = useState(false)
 
-  function toggle(key) {
-    setToggles((prev) => prev.map((t) => (t.key === key ? { ...t, on: !t.on } : t)))
+  useEffect(() => {
+    if (!user) return
+    return subscribeToUserProfile(user.uid, (profile) => {
+      if (profile?.notificationSettings) setSettings(profile.notificationSettings)
+    })
+  }, [user])
+
+  async function toggle(key) {
+    const next = { ...settings, [key]: !settings[key] }
+    setSettings(next) // update immediately so the switch feels instant
+    setSaving(true)
+    try {
+      await updateNotificationSettings(user.uid, next)
+    } catch (err) {
+      setSettings(settings) // revert on failure
+    } finally {
+      setSaving(false)
+    }
   }
 
   return (
@@ -24,18 +45,19 @@ export default function Notification() {
           <ChevronLeft size={22} />
         </button>
         <h1 className="font-display font-bold text-xl md:text-2xl lg:text-3xl">Notification</h1>
+        {saving && <span className="text-xs text-muted ml-2">Saving...</span>}
       </div>
 
       <Card className="p-0 overflow-hidden">
-        {toggles.map((t, i) => (
+        {Object.keys(labels).map((key, i) => (
           <div
-            key={t.key}
+            key={key}
             className={`flex items-center justify-between px-5 py-4 ${
-              i !== toggles.length - 1 ? 'border-b border-black/5' : ''
+              i !== Object.keys(labels).length - 1 ? 'border-b border-black/5' : ''
             }`}
           >
-            <span className="text-sm font-medium">{t.label}</span>
-            <Switch on={t.on} onClick={() => toggle(t.key)} />
+            <span className="text-sm font-medium">{labels[key]}</span>
+            <Switch on={Boolean(settings[key])} onClick={() => toggle(key)} />
           </div>
         ))}
       </Card>

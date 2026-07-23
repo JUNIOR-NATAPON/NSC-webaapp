@@ -1,7 +1,10 @@
+import { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { Smartphone, User, Bell, ChevronRight, LogOut } from 'lucide-react'
 import useIsDesktop from '../hooks/useIsDesktop.js'
 import Card from '../components/Card.jsx'
+import { useAuth } from '../context/AuthContext.jsx'
+import { subscribeToUserProfile } from '../lib/firestore.js'
 
 const items = [
   { label: 'Device', icon: Smartphone, to: '/settings/device' },
@@ -12,6 +15,18 @@ const items = [
 export default function Profile() {
   const navigate = useNavigate()
   const isDesktop = useIsDesktop()
+  const { user, logOut } = useAuth()
+  const [profile, setProfile] = useState(null)
+
+  useEffect(() => {
+    if (!user) return
+    return subscribeToUserProfile(user.uid, setProfile)
+  }, [user])
+
+  async function handleSignOut() {
+    await logOut()
+    navigate('/login')
+  }
 
   return (
     <div className="space-y-6 md:max-w-md">
@@ -19,8 +34,10 @@ export default function Profile() {
         <div className="h-24 w-24 md:h-32 md:w-32 rounded-full bg-ink flex items-center justify-center mb-3">
           <User size={isDesktop ? 56 : 44} className="text-white" />
         </div>
-        <h1 className="font-display font-bold text-xl md:text-2xl lg:text-3xl">User</h1>
-        <p className="text-sm text-muted">********@email.com</p>
+        <h1 className="font-display font-bold text-xl md:text-2xl lg:text-3xl">
+          {profile?.username || user?.displayName || 'User'}
+        </h1>
+        <p className="text-sm text-muted">{user?.email}</p>
       </div>
 
       <Card className="p-0 overflow-hidden">
@@ -43,7 +60,7 @@ export default function Profile() {
       </Card>
 
       <button
-        onClick={() => navigate('/login')}
+        onClick={handleSignOut}
         className="w-full flex items-center justify-center gap-2 border border-danger/30 text-danger rounded-xl py-3.5 font-semibold text-sm bg-white"
       >
         <LogOut size={16} />

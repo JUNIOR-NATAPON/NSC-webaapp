@@ -11,6 +11,7 @@ import Profile from './pages/Profile.jsx'
 import Notification from './pages/Notification.jsx'
 import Account from './pages/Account.jsx'
 import Device from './pages/Device.jsx'
+import { useAuth } from './context/AuthContext.jsx'
 
 function AppShell({ children }) {
   return (
@@ -26,21 +27,60 @@ function AppShell({ children }) {
   )
 }
 
+// Blocks access to app pages until Firebase confirms a signed-in user.
+// Also handles the loading flash on refresh (auth state isn't known
+// synchronously) so we don't bounce a logged-in user to /login by mistake.
+function ProtectedRoute({ children }) {
+  const { user, loading } = useAuth()
+
+  if (loading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-surface">
+        <p className="text-muted text-sm">Loading...</p>
+      </div>
+    )
+  }
+
+  if (!user) {
+    return <Navigate to="/login" replace />
+  }
+
+  return children
+}
+
+// Sends an already-logged-in user straight to /home instead of showing
+// them the login screen again.
+function PublicOnlyRoute({ children }) {
+  const { user, loading } = useAuth()
+  if (loading) return null
+  if (user) return <Navigate to="/home" replace />
+  return children
+}
+
 export default function App() {
   return (
     <Routes>
       <Route path="/" element={<Navigate to="/login" replace />} />
-      <Route path="/login" element={<Login />} />
-      <Route path="/signup" element={<SignUp />} />
+      <Route path="/login" element={<PublicOnlyRoute><Login /></PublicOnlyRoute>} />
+      <Route path="/signup" element={<PublicOnlyRoute><SignUp /></PublicOnlyRoute>} />
 
-      <Route path="/home" element={<AppShell><Home /></AppShell>} />
-      <Route path="/data" element={<AppShell><Data /></AppShell>} />
-      <Route path="/history" element={<AppShell><History /></AppShell>} />
-      <Route path="/filter" element={<AppShell><Filter /></AppShell>} />
-      <Route path="/profile" element={<AppShell><Profile /></AppShell>} />
-      <Route path="/settings/notification" element={<AppShell><Notification /></AppShell>} />
-      <Route path="/settings/account" element={<AppShell><Account /></AppShell>} />
-      <Route path="/settings/device" element={<AppShell><Device /></AppShell>} />
+      <Route path="/home" element={<ProtectedRoute><AppShell><Home /></AppShell></ProtectedRoute>} />
+      <Route path="/data" element={<ProtectedRoute><AppShell><Data /></AppShell></ProtectedRoute>} />
+      <Route path="/history" element={<ProtectedRoute><AppShell><History /></AppShell></ProtectedRoute>} />
+      <Route path="/filter" element={<ProtectedRoute><AppShell><Filter /></AppShell></ProtectedRoute>} />
+      <Route path="/profile" element={<ProtectedRoute><AppShell><Profile /></AppShell></ProtectedRoute>} />
+      <Route
+        path="/settings/notification"
+        element={<ProtectedRoute><AppShell><Notification /></AppShell></ProtectedRoute>}
+      />
+      <Route
+        path="/settings/account"
+        element={<ProtectedRoute><AppShell><Account /></AppShell></ProtectedRoute>}
+      />
+      <Route
+        path="/settings/device"
+        element={<ProtectedRoute><AppShell><Device /></AppShell></ProtectedRoute>}
+      />
     </Routes>
   )
 }

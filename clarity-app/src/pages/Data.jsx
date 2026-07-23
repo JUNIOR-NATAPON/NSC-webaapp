@@ -1,7 +1,10 @@
+import { useEffect, useState } from 'react'
 import { Link } from 'react-router-dom'
 import { History as HistoryIcon, ChevronRight } from 'lucide-react'
 import Card from '../components/Card.jsx'
 import Badge from '../components/Badge.jsx'
+import { useAuth } from '../context/AuthContext.jsx'
+import { subscribeToPrimaryDevice } from '../lib/firestore.js'
 
 const guide = [
   { range: '0-4 NTU', label: 'clean, safe', tone: 'clean' },
@@ -9,21 +12,56 @@ const guide = [
   { range: '>10 NTU', label: 'high, filter need', tone: 'danger' }
 ]
 
+function toneForValue(v) {
+  if (v <= 4) return 'clean'
+  if (v <= 10) return 'warn'
+  return 'danger'
+}
+
+function labelForValue(v) {
+  if (v <= 4) return 'Clean'
+  if (v <= 10) return 'Moderate'
+  return 'High'
+}
+
 export default function Data() {
+  const { user } = useAuth()
+  const [device, setDevice] = useState(null)
+
+  useEffect(() => {
+    if (!user) return
+    return subscribeToPrimaryDevice(user.uid, setDevice)
+  }, [user])
+
+  if (!device) {
+    return (
+      <div className="space-y-6 md:max-w-lg lg:max-w-2xl">
+        <h1 className="font-display font-bold text-xl md:text-2xl lg:text-3xl">Current turbidity</h1>
+        <Card className="text-center py-10">
+          <p className="text-sm text-muted">No device paired yet.</p>
+        </Card>
+      </div>
+    )
+  }
+
+  const before = device.ntuBefore ?? 0
+  const after = device.ntuAfter ?? 0
+  const efficiency = before > 0 ? (((before - after) / before) * 100).toFixed(2) : '0.00'
+
   return (
     <div className="space-y-6 md:max-w-lg lg:max-w-2xl">
       <h1 className="font-display font-bold text-xl md:text-2xl lg:text-3xl">Current turbidity</h1>
 
       <Card className="text-center">
-        <p className="font-display font-extrabold text-6xl md:text-7xl lg:text-8xl mb-1">0.3</p>
+        <p className="font-display font-extrabold text-6xl md:text-7xl lg:text-8xl mb-1">{after}</p>
         <p className="text-sm text-muted mb-3">NTU</p>
-        <Badge tone="clean">Clean</Badge>
+        <Badge tone={toneForValue(after)}>{labelForValue(after)}</Badge>
       </Card>
 
       <Card>
-        <Row label="Before filter" value="2.4 NTU" tone="warn" />
-        <Row label="After filter" value="0.3 NTU" tone="clean" />
-        <Row label="Filter efficiency" value="87.75%" tone="clean" isLast />
+        <Row label="Before filter" value={`${before} NTU`} tone={toneForValue(before)} />
+        <Row label="After filter" value={`${after} NTU`} tone={toneForValue(after)} />
+        <Row label="Filter efficiency" value={`${efficiency}%`} tone="clean" isLast />
       </Card>
 
       <Card>
