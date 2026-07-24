@@ -1,7 +1,8 @@
 import { Link, useNavigate } from 'react-router-dom'
-import { Mail, User, Lock, Droplets } from 'lucide-react'
+import { Mail, User, Lock } from 'lucide-react'
 import { useState } from 'react'
 import { useAuth } from '../context/AuthContext.jsx'
+import logo from '../assets/logo.png'
 
 function firebaseErrorMessage(err) {
   switch (err.code) {
@@ -55,10 +56,7 @@ export default function SignUp() {
     <div className="min-h-screen flex items-center justify-center px-6 py-10 bg-surface">
       <div className="w-full max-w-sm md:max-w-md lg:max-w-lg">
         <div className="flex flex-col items-center mb-8">
-          <div className="h-20 w-20 md:h-24 md:w-24 rounded-2xl bg-brand-light flex items-center justify-center mb-3">
-            <Droplets size={32} className="text-brand" />
-          </div>
-          <h1 className="font-display font-extrabold text-2xl md:text-3xl text-brand">Clarity</h1>
+          <img src={logo} alt="Clarity — smart water bottle cap" className="w-60 md:w-72 object-contain" />
         </div>
 
         {error && (

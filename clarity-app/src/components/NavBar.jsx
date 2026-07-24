@@ -1,5 +1,6 @@
 import { NavLink } from 'react-router-dom'
-import { Home, Database, Filter, User, Droplets } from 'lucide-react'
+import { Home, Database, Filter, User } from 'lucide-react'
+import logoMark from '../assets/logo-mark.png'
 
 const links = [
   { to: '/home', label: 'Home', icon: Home },
@@ -42,9 +43,7 @@ export default function NavBar() {
       {/* Desktop / tablet sidebar */}
       <aside className="hidden md:flex md:flex-col md:w-60 md:shrink-0 md:h-screen md:sticky md:top-0 border-r border-black/5 bg-white px-4 py-6">
         <div className="flex items-center gap-2 px-2 mb-8">
-          <div className="h-9 w-9 rounded-full bg-brand-light flex items-center justify-center">
-            <Droplets size={18} className="text-brand" />
-          </div>
+          <img src={logoMark} alt="Clarity" className="h-9 w-9 object-contain" />
           <span className="font-display font-bold text-lg text-brand">Clarity</span>
         </div>
         <nav className="flex flex-col gap-1">
