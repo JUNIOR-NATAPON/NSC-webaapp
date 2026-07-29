@@ -1,0 +1,128 @@
+import { ResponsiveContainer, XAxis, Tooltip, Area, AreaChart } from 'recharts'
+import useIsDesktop from '../hooks/useIsDesktop.js'
+import Card from '../components/Card.jsx'
+import Badge from '../components/Badge.jsx'
+import MicroplasticCard from '../components/MicroplasticCard.jsx'
+
+const trend = [
+  { time: '6am', ntu: 2.8 },
+  { time: '9am', ntu: 2.1 },
+  { time: '12pm', ntu: 3.4 },
+  { time: '3pm', ntu: 11.2 },
+  { time: '6pm', ntu: 6.5 },
+  { time: '9pm', ntu: 2.4 }
+]
+
+function colorForValue(v) {
+  if (v <= 4) return '#22B26A'
+  if (v <= 10) return '#E0A824'
+  return '#E5484D'
+}
+function toneForValue(v) {
+  if (v <= 4) return 'clean'
+  if (v <= 10) return 'warn'
+  return 'danger'
+}
+function labelForValue(v) {
+  if (v <= 4) return 'Clean'
+  if (v <= 10) return 'Moderate'
+  return 'High'
+}
+
+export default function Home() {
+  const isDesktop = useIsDesktop()
+  const latest = trend[trend.length - 1]
+
+  return (
+    <div className="space-y-6 md:grid md:grid-cols-2 md:gap-6 md:space-y-0">
+      <div className="md:col-span-2">
+        <h1 className="font-display font-bold text-xl md:text-2xl lg:text-3xl">Good Morning, User</h1>
+      </div>
+
+      <Card>
+        <div className="flex justify-between items-center mb-4">
+          <div>
+            <p className="text-xs md:text-sm text-muted mb-1">NTU now</p>
+            <p className="font-display font-extrabold text-3xl md:text-4xl lg:text-5xl">2.4</p>
+          </div>
+          <div className="text-right">
+            <p className="text-xs md:text-sm text-muted mb-1">After filter</p>
+            <p className="font-display font-extrabold text-3xl md:text-4xl lg:text-5xl text-brand">0.3</p>
+          </div>
+        </div>
+        <div className="flex justify-between items-center">
+          <p className="text-sm md:text-base text-muted">Before filter</p>
+          <Badge tone="clean">Clean</Badge>
+        </div>
+      </Card>
+
+      <Card>
+        <p className="text-sm md:text-base font-semibold mb-3">Quick Status</p>
+        <div className="space-y-3">
+          <Row label="Filter 68% remaining" tone="clean" value="OK" />
+          <Row label="Water Quality" tone="clean" value="Clean" />
+        </div>
+      </Card>
+
+      <MicroplasticCard />
+
+      <Card className="md:col-span-2">
+        <div className="flex items-center justify-between mb-1">
+          <p className="text-sm md:text-base font-semibold">Today's NTU trend</p>
+          <Badge tone={toneForValue(latest.ntu)}>{labelForValue(latest.ntu)}</Badge>
+        </div>
+        <p className="text-xs md:text-sm text-muted mb-4">After-filter readings, every 3 hours</p>
+        <div className="h-40 sm:h-52 md:h-64 lg:h-72">
+          <ResponsiveContainer width="100%" height="100%">
+            <AreaChart data={trend} margin={{ top: 8, right: 4, left: 4, bottom: 0 }}>
+              <defs>
+                <linearGradient id="lineColor" x1="0" y1="0" x2="1" y2="0">
+                  {trend.map((d, i) => (
+                    <stop key={i} offset={`${(i / (trend.length - 1)) * 100}%`} stopColor={colorForValue(d.ntu)} />
+                  ))}
+                </linearGradient>
+                <linearGradient id="ntuFill" x1="0" y1="0" x2="1" y2="0">
+                  {trend.map((d, i) => (
+                    <stop
+                      key={i}
+                      offset={`${(i / (trend.length - 1)) * 100}%`}
+                      stopColor={colorForValue(d.ntu)}
+                      stopOpacity={0.22}
+                    />
+                  ))}
+                </linearGradient>
+              </defs>
+              <XAxis dataKey="time" tick={{ fontSize: isDesktop ? 13 : 11, fill: '#6B7280' }} axisLine={false} tickLine={false} />
+              <Tooltip
+                formatter={(value) => [`${value} NTU`, 'Reading']}
+                contentStyle={{ borderRadius: 12, border: '1px solid rgba(0,0,0,0.08)', fontSize: 12 }}
+              />
+              <Area
+                type="monotone"
+                dataKey="ntu"
+                stroke="url(#lineColor)"
+                strokeWidth={2.5}
+                fill="url(#ntuFill)"
+                dot={<ColorDot isDesktop={isDesktop} />}
+                activeDot={{ r: isDesktop ? 7 : 5 }}
+              />
+            </AreaChart>
+          </ResponsiveContainer>
+        </div>
+      </Card>
+    </div>
+  )
+}
+
+function ColorDot({ cx, cy, payload, isDesktop }) {
+  return <circle cx={cx} cy={cy} r={isDesktop ? 4.5 : 3} fill={colorForValue(payload.ntu)} stroke="none" />
+}
+
+function Row({ label, value, tone }) {
+  return (
+    <div className="flex justify-between items-center">
+      <span className="text-sm text-muted">{label}</span>
+      <Badge tone={tone}>{value}</Badge>
+    </div>
+  )
+}
