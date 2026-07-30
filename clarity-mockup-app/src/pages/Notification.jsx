@@ -2,6 +2,7 @@ import { useNavigate } from 'react-router-dom'
 import { ChevronLeft } from 'lucide-react'
 import { useState } from 'react'
 import Card from '../components/Card.jsx'
+import { useToast } from '../context/ToastContext.jsx'
 
 const initial = [
   { key: 'filterLow', label: 'Filter low alert', on: true },
@@ -12,9 +13,17 @@ const initial = [
 export default function Notification() {
   const navigate = useNavigate()
   const [toggles, setToggles] = useState(initial)
+  const { showToast } = useToast()
 
   function toggle(key) {
-    setToggles((prev) => prev.map((t) => (t.key === key ? { ...t, on: !t.on } : t)))
+    setToggles((prev) =>
+      prev.map((t) => {
+        if (t.key !== key) return t
+        const next = !t.on
+        showToast(`${t.label} turned ${next ? 'on' : 'off'}`)
+        return { ...t, on: next }
+      })
+    )
   }
 
   return (
@@ -31,7 +40,7 @@ export default function Notification() {
           <div
             key={t.key}
             className={`flex items-center justify-between px-5 py-4 ${
-              i !== toggles.length - 1 ? 'border-b border-black/5' : ''
+              i !== toggles.length - 1 ? 'border-b border-black/5 dark:border-white/10' : ''
             }`}
           >
             <span className="text-sm font-medium">{t.label}</span>
@@ -49,7 +58,7 @@ function Switch({ on, onClick }) {
       onClick={onClick}
       aria-pressed={on}
       className={`h-7 w-12 rounded-full transition-colors shrink-0 flex items-center p-0.5 ${
-        on ? 'bg-brand justify-end' : 'bg-black/15 justify-start'
+        on ? 'bg-brand justify-end' : 'bg-black/15 dark:bg-white/15 justify-start'
       }`}
     >
       <span className="h-6 w-6 bg-white rounded-full shadow transition-all" />

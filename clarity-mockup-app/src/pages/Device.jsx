@@ -26,7 +26,7 @@ export default function Device() {
           <div
             key={d.name}
             className={`flex items-center justify-between px-5 py-4 ${
-              i !== devices.length - 1 ? 'border-b border-black/5' : ''
+              i !== devices.length - 1 ? 'border-b border-black/5 dark:border-white/10' : ''
             }`}
           >
             <span className="flex items-center gap-3 text-sm font-medium">

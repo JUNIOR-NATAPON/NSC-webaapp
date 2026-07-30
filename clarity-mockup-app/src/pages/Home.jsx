@@ -2,56 +2,56 @@ import { ResponsiveContainer, XAxis, Tooltip, Area, AreaChart } from 'recharts'
 import useIsDesktop from '../hooks/useIsDesktop.js'
 import Card from '../components/Card.jsx'
 import Badge from '../components/Badge.jsx'
+import Delta from '../components/Delta.jsx'
+import DeviceStatus from '../components/DeviceStatus.jsx'
 import MicroplasticCard from '../components/MicroplasticCard.jsx'
+import { useTheme } from '../context/ThemeContext.jsx'
+import {
+  current,
+  todayTrend,
+  toneForValue,
+  labelForValue,
+  colorForValue,
+  filterStatus,
+  toneForRemaining,
+  yesterday,
+  percentChange
+} from '../data/sampleData.js'
 
-const trend = [
-  { time: '6am', ntu: 2.8 },
-  { time: '9am', ntu: 2.1 },
-  { time: '12pm', ntu: 3.4 },
-  { time: '3pm', ntu: 11.2 },
-  { time: '6pm', ntu: 6.5 },
-  { time: '9pm', ntu: 2.4 }
-]
-
-function colorForValue(v) {
-  if (v <= 4) return '#22B26A'
-  if (v <= 10) return '#E0A824'
-  return '#E5484D'
-}
-function toneForValue(v) {
-  if (v <= 4) return 'clean'
-  if (v <= 10) return 'warn'
-  return 'danger'
-}
-function labelForValue(v) {
-  if (v <= 4) return 'Clean'
-  if (v <= 10) return 'Moderate'
-  return 'High'
+function greeting() {
+  const hour = new Date().getHours()
+  if (hour < 12) return 'Good Morning'
+  if (hour < 18) return 'Good Afternoon'
+  return 'Good Evening'
 }
 
 export default function Home() {
   const isDesktop = useIsDesktop()
-  const latest = trend[trend.length - 1]
+  const { theme } = useTheme()
+  const isDark = theme === 'dark'
+  const latest = todayTrend[todayTrend.length - 1]
 
   return (
     <div className="space-y-6 md:grid md:grid-cols-2 md:gap-6 md:space-y-0">
       <div className="md:col-span-2">
-        <h1 className="font-display font-bold text-xl md:text-2xl lg:text-3xl">Good Morning, User</h1>
+        <h1 className="font-display font-bold text-xl md:text-2xl lg:text-3xl">{greeting()}, User</h1>
+        <DeviceStatus className="mt-1" />
       </div>
 
       <Card>
         <div className="flex justify-between items-center mb-4">
           <div>
-            <p className="text-xs md:text-sm text-muted mb-1">NTU now</p>
-            <p className="font-display font-extrabold text-3xl md:text-4xl lg:text-5xl">2.4</p>
+            <p className="text-xs md:text-sm text-muted dark:text-muted-dark mb-1">NTU now</p>
+            <p className="font-display font-extrabold text-3xl md:text-4xl lg:text-5xl">{current.before}</p>
+            <Delta percent={percentChange(current.before, yesterday.before)} goodDirection="down" />
           </div>
           <div className="text-right">
-            <p className="text-xs md:text-sm text-muted mb-1">After filter</p>
-            <p className="font-display font-extrabold text-3xl md:text-4xl lg:text-5xl text-brand">0.3</p>
+            <p className="text-xs md:text-sm text-muted dark:text-muted-dark mb-1">After filter</p>
+            <p className="font-display font-extrabold text-3xl md:text-4xl lg:text-5xl text-brand">{current.after}</p>
           </div>
         </div>
         <div className="flex justify-between items-center">
-          <p className="text-sm md:text-base text-muted">Before filter</p>
+          <p className="text-sm md:text-base text-muted dark:text-muted-dark">Before filter</p>
           <Badge tone="clean">Clean</Badge>
         </div>
       </Card>
@@ -59,7 +59,17 @@ export default function Home() {
       <Card>
         <p className="text-sm md:text-base font-semibold mb-3">Quick Status</p>
         <div className="space-y-3">
-          <Row label="Filter 68% remaining" tone="clean" value="OK" />
+          <div>
+            <Row
+              label={`Filter ${filterStatus.remainingPercent}% remaining`}
+              tone={toneForRemaining(filterStatus.remainingPercent)}
+              value="OK"
+            />
+            <Delta
+              percent={percentChange(filterStatus.remainingPercent, filterStatus.yesterdayRemainingPercent)}
+              neutral
+            />
+          </div>
           <Row label="Water Quality" tone="clean" value="Clean" />
         </div>
       </Card>
@@ -71,31 +81,42 @@ export default function Home() {
           <p className="text-sm md:text-base font-semibold">Today's NTU trend</p>
           <Badge tone={toneForValue(latest.ntu)}>{labelForValue(latest.ntu)}</Badge>
         </div>
-        <p className="text-xs md:text-sm text-muted mb-4">After-filter readings, every 3 hours</p>
+        <p className="text-xs md:text-sm text-muted dark:text-muted-dark mb-4">Before-filter readings, every 3 hours</p>
         <div className="h-40 sm:h-52 md:h-64 lg:h-72">
           <ResponsiveContainer width="100%" height="100%">
-            <AreaChart data={trend} margin={{ top: 8, right: 4, left: 4, bottom: 0 }}>
+            <AreaChart data={todayTrend} margin={{ top: 8, right: 4, left: 4, bottom: 0 }}>
               <defs>
                 <linearGradient id="lineColor" x1="0" y1="0" x2="1" y2="0">
-                  {trend.map((d, i) => (
-                    <stop key={i} offset={`${(i / (trend.length - 1)) * 100}%`} stopColor={colorForValue(d.ntu)} />
+                  {todayTrend.map((d, i) => (
+                    <stop key={i} offset={`${(i / (todayTrend.length - 1)) * 100}%`} stopColor={colorForValue(d.ntu)} />
                   ))}
                 </linearGradient>
                 <linearGradient id="ntuFill" x1="0" y1="0" x2="1" y2="0">
-                  {trend.map((d, i) => (
+                  {todayTrend.map((d, i) => (
                     <stop
                       key={i}
-                      offset={`${(i / (trend.length - 1)) * 100}%`}
+                      offset={`${(i / (todayTrend.length - 1)) * 100}%`}
                       stopColor={colorForValue(d.ntu)}
                       stopOpacity={0.22}
                     />
                   ))}
                 </linearGradient>
               </defs>
-              <XAxis dataKey="time" tick={{ fontSize: isDesktop ? 13 : 11, fill: '#6B7280' }} axisLine={false} tickLine={false} />
+              <XAxis
+                dataKey="time"
+                tick={{ fontSize: isDesktop ? 13 : 11, fill: isDark ? '#9AA7BD' : '#6B7280' }}
+                axisLine={false}
+                tickLine={false}
+              />
               <Tooltip
                 formatter={(value) => [`${value} NTU`, 'Reading']}
-                contentStyle={{ borderRadius: 12, border: '1px solid rgba(0,0,0,0.08)', fontSize: 12 }}
+                contentStyle={{
+                  borderRadius: 12,
+                  border: isDark ? '1px solid rgba(255,255,255,0.1)' : '1px solid rgba(0,0,0,0.08)',
+                  fontSize: 12,
+                  background: isDark ? '#1B2236' : '#FFFFFF',
+                  color: isDark ? '#FFFFFF' : '#12172B'
+                }}
               />
               <Area
                 type="monotone"
@@ -121,7 +142,7 @@ function ColorDot({ cx, cy, payload, isDesktop }) {
 function Row({ label, value, tone }) {
   return (
     <div className="flex justify-between items-center">
-      <span className="text-sm text-muted">{label}</span>
+      <span className="text-sm text-muted dark:text-muted-dark">{label}</span>
       <Badge tone={tone}>{value}</Badge>
     </div>
   )

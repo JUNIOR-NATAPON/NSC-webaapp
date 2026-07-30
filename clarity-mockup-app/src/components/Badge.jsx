@@ -1,7 +1,7 @@
 const tones = {
-  clean: 'bg-clean-bg text-clean',
-  warn: 'bg-warn-bg text-warn',
-  danger: 'bg-danger-bg text-danger'
+  clean: 'bg-clean-bg text-clean dark:bg-clean/15',
+  warn: 'bg-warn-bg text-warn dark:bg-warn/15',
+  danger: 'bg-danger-bg text-danger dark:bg-danger/15'
 }
 
 export default function Badge({ children, tone = 'clean' }) {

@@ -2,6 +2,7 @@ import { Link } from 'react-router-dom'
 import { History as HistoryIcon, ChevronRight } from 'lucide-react'
 import Card from '../components/Card.jsx'
 import Badge from '../components/Badge.jsx'
+import { current } from '../data/sampleData.js'
 
 const guide = [
   { range: '0-4 NTU', label: 'clean, safe', tone: 'clean' },
@@ -10,8 +11,7 @@ const guide = [
 ]
 
 export default function Data() {
-  const before = 2.4
-  const after = 0.3
+  const { before, after } = current
   const efficiency = (((before - after) / before) * 100).toFixed(2)
 
   return (
@@ -20,7 +20,7 @@ export default function Data() {
 
       <Card className="text-center">
         <p className="font-display font-extrabold text-6xl md:text-7xl lg:text-8xl mb-1">{after}</p>
-        <p className="text-sm text-muted mb-3">NTU</p>
+        <p className="text-sm text-muted dark:text-muted-dark mb-3">NTU</p>
         <Badge tone="clean">Clean</Badge>
       </Card>
 
@@ -40,7 +40,7 @@ export default function Data() {
                   g.tone === 'clean' ? 'bg-clean' : g.tone === 'warn' ? 'bg-warn' : 'bg-danger'
                 }`}
               />
-              <span className="text-sm text-muted flex-1">
+              <span className="text-sm text-muted dark:text-muted-dark flex-1">
                 {g.range} - {g.label}
               </span>
             </div>
@@ -48,12 +48,15 @@ export default function Data() {
         </div>
       </Card>
 
-      <Link to="/history" className="flex items-center justify-between bg-white rounded-2xl shadow-card px-5 py-4">
+      <Link
+        to="/history"
+        className="flex items-center justify-between bg-white dark:bg-card-dark rounded-2xl shadow-card dark:shadow-none px-5 py-4"
+      >
         <span className="flex items-center gap-3 text-sm font-semibold">
-          <HistoryIcon size={18} className="text-muted" />
+          <HistoryIcon size={18} className="text-muted dark:text-muted-dark" />
           History
         </span>
-        <ChevronRight size={16} className="text-muted" />
+        <ChevronRight size={16} className="text-muted dark:text-muted-dark" />
       </Link>
     </div>
   )
@@ -61,8 +64,8 @@ export default function Data() {
 
 function Row({ label, value, tone, isLast }) {
   return (
-    <div className={`flex justify-between items-center py-2.5 ${!isLast ? 'border-b border-black/5' : ''}`}>
-      <span className="text-sm text-muted">{label}</span>
+    <div className={`flex justify-between items-center py-2.5 ${!isLast ? 'border-b border-black/5 dark:border-white/10' : ''}`}>
+      <span className="text-sm text-muted dark:text-muted-dark">{label}</span>
       <Badge tone={tone}>{value}</Badge>
     </div>
   )

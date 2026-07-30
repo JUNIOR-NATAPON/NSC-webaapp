@@ -1,4 +1,4 @@
-import { Routes, Route, Navigate } from 'react-router-dom'
+import { Routes, Route, Navigate, useLocation } from 'react-router-dom'
 import NavBar from './components/NavBar.jsx'
 import TopBar from './components/TopBar.jsx'
 import Home from './pages/Home.jsx'
@@ -12,13 +12,17 @@ import Device from './pages/Device.jsx'
 import Login from './pages/Login.jsx'
 import SignUp from './pages/SignUp.jsx'
 
-function AppShell({ children }) {
+function AppShell({ children, title }) {
+  const { pathname } = useLocation()
   return (
     <div className="md:flex md:min-h-screen">
       <NavBar />
       <div className="flex-1 min-w-0">
-        <TopBar />
-        <main className="max-w-4xl lg:max-w-5xl mx-auto px-5 py-6 pb-24 md:pb-10 md:px-10 md:py-10 lg:px-14 lg:py-14">
+        <TopBar title={title} />
+        <main
+          key={pathname}
+          className="animate-page-in max-w-4xl lg:max-w-5xl mx-auto px-5 py-6 pb-24 md:pb-10 md:px-10 md:py-10 lg:px-14 lg:py-14"
+        >
           {children}
         </main>
       </div>
@@ -36,14 +40,16 @@ export default function App() {
       <Route path="/login" element={<Login />} />
       <Route path="/signup" element={<SignUp />} />
 
-      <Route path="/home" element={<AppShell><Home /></AppShell>} />
-      <Route path="/data" element={<AppShell><Data /></AppShell>} />
-      <Route path="/history" element={<AppShell><History /></AppShell>} />
-      <Route path="/filter" element={<AppShell><Filter /></AppShell>} />
-      <Route path="/profile" element={<AppShell><Profile /></AppShell>} />
-      <Route path="/settings/notification" element={<AppShell><Notification /></AppShell>} />
-      <Route path="/settings/account" element={<AppShell><Account /></AppShell>} />
-      <Route path="/settings/device" element={<AppShell><Device /></AppShell>} />
+      <Route path="/home" element={<AppShell title="Home"><Home /></AppShell>} />
+      <Route path="/data" element={<AppShell title="Data"><Data /></AppShell>} />
+      <Route path="/history" element={<AppShell title="History"><History /></AppShell>} />
+      <Route path="/filter" element={<AppShell title="Filter"><Filter /></AppShell>} />
+      <Route path="/profile" element={<AppShell title="Profile"><Profile /></AppShell>} />
+      <Route path="/settings/notification" element={<AppShell title="Notification"><Notification /></AppShell>} />
+      <Route path="/settings/account" element={<AppShell title="Account"><Account /></AppShell>} />
+      <Route path="/settings/device" element={<AppShell title="Device"><Device /></AppShell>} />
+
+      <Route path="*" element={<Navigate to="/home" replace />} />
     </Routes>
   )
 }

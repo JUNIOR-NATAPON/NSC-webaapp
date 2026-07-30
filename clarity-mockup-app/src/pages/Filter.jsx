@@ -1,5 +1,8 @@
 import { ArrowUpRight } from 'lucide-react'
 import Card from '../components/Card.jsx'
+import Delta from '../components/Delta.jsx'
+import RadialGauge from '../components/RadialGauge.jsx'
+import { filterStatus, toneForRemaining, percentChange } from '../data/sampleData.js'
 
 const log = [
   { date: '14/01/2026', time: '10:32' },
@@ -13,18 +16,22 @@ export default function Filter() {
     <div className="space-y-6 md:max-w-lg lg:max-w-2xl">
       <h1 className="font-display font-bold text-xl md:text-2xl lg:text-3xl">Status</h1>
 
-      <Card>
-        <div className="flex items-center justify-between">
-          <p className="text-sm text-muted mb-1">Need replacement</p>
-          <span className="bg-warn text-white font-display font-extrabold text-2xl px-5 py-2 rounded-xl">5%</span>
+      <Card className="flex flex-col items-center text-center">
+        <RadialGauge percent={filterStatus.remainingPercent} tone={toneForRemaining(filterStatus.remainingPercent)} size={120} strokeWidth={11}>
+          <span className="font-display font-extrabold text-3xl">{filterStatus.remainingPercent}%</span>
+          <span className="text-xs text-muted dark:text-muted-dark">remaining</span>
+        </RadialGauge>
+        <p className="text-sm font-semibold mt-3">Filter life remaining</p>
+        <div className="mt-1">
+          <Delta percent={percentChange(filterStatus.remainingPercent, filterStatus.yesterdayRemainingPercent)} neutral />
         </div>
       </Card>
 
       <div>
         <div className="flex items-center gap-3 mb-4">
-          <div className="h-px bg-black/10 flex-1" />
-          <p className="text-sm font-semibold text-muted">Filter Log</p>
-          <div className="h-px bg-black/10 flex-1" />
+          <div className="h-px bg-black/10 dark:bg-white/10 flex-1" />
+          <p className="text-sm font-semibold text-muted dark:text-muted-dark">Filter Log</p>
+          <div className="h-px bg-black/10 dark:bg-white/10 flex-1" />
         </div>
 
         <Card className="p-0 overflow-hidden">
@@ -32,12 +39,12 @@ export default function Filter() {
             <div
               key={i}
               className={`flex items-center gap-3 px-5 py-4 text-sm ${
-                i !== log.length - 1 ? 'border-b border-black/5' : ''
+                i !== log.length - 1 ? 'border-b border-black/5 dark:border-white/10' : ''
               }`}
             >
               <ArrowUpRight size={16} className="text-brand" />
               <span className="font-medium flex-1">{item.date}</span>
-              <span className="text-muted">{item.time}</span>
+              <span className="text-muted dark:text-muted-dark">{item.time}</span>
             </div>
           ))}
         </Card>
