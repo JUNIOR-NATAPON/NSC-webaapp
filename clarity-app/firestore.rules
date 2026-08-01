@@ -2,32 +2,37 @@ rules_version = '2';
 service cloud.firestore {
   match /databases/{database}/documents {
 
-    // Each user can only read/write their own profile doc.
+    // User profiles — only the owner can read/write.
     match /users/{uid} {
       allow read, write: if request.auth != null && request.auth.uid == uid;
     }
 
-    // Devices: a user can read/write devices they own. Your hardware
-    // should authenticate with a service account or a dedicated device
-    // user, or write through a trusted backend (e.g. Cloud Functions),
-    // rather than using a regular user's credentials.
+    // Devices — owner can read. ESP32 can update status without auth.
     match /devices/{deviceId} {
-      allow read: if request.auth != null && resource.data.ownerUid == request.auth.uid;
-      allow create: if request.auth != null && request.resource.data.ownerUid == request.auth.uid;
-      allow update: if request.auth != null && resource.data.ownerUid == request.auth.uid;
+      allow read: if request.auth != null
+        && resource.data.ownerUid == request.auth.uid;
+      allow create: if request.auth != null
+        && request.resource.data.ownerUid == request.auth.uid;
+      // ESP32 is allowed to update device status fields (ntu, class, etc.)
+      // without authentication. Tighten this once a device auth flow is added.
+      allow update: if true;
 
+      // Readings — owner can read, ESP32 can write without auth.
       match /readings/{readingId} {
         allow read: if request.auth != null
-          && get(/databases/$(database)/documents/devices/$(deviceId)).data.ownerUid == request.auth.uid;
-        allow create: if request.auth != null
-          && get(/databases/$(database)/documents/devices/$(deviceId)).data.ownerUid == request.auth.uid;
+          && get(/databases/$(database)/documents/devices/$(deviceId)).data.ownerUid
+             == request.auth.uid;
+        allow create: if true; // ESP32 writes here via REST API
       }
 
+      // Filter log — only the owner can read/write.
       match /filterLog/{logId} {
         allow read: if request.auth != null
-          && get(/databases/$(database)/documents/devices/$(deviceId)).data.ownerUid == request.auth.uid;
+          && get(/databases/$(database)/documents/devices/$(deviceId)).data.ownerUid
+             == request.auth.uid;
         allow create: if request.auth != null
-          && get(/databases/$(database)/documents/devices/$(deviceId)).data.ownerUid == request.auth.uid;
+          && get(/databases/$(database)/documents/devices/$(deviceId)).data.ownerUid
+             == request.auth.uid;
       }
     }
   }
