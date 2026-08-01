@@ -51,12 +51,12 @@ export default function MicroplasticCard({
       </div>
 
       <div className="flex items-center gap-5">
-        <div className="flex flex-col items-center">
+        <div className="flex flex-col items-center shrink-0">
           <BodyFillGauge percent={percent} tone={level.tone} width={gaugeWidth} height={gaugeHeight} />
           <span className="text-xs font-semibold mt-1">{percent}% of goal</span>
         </div>
-        <div className="flex-1 flex justify-center">
-          <div className="w-80 text-center">
+        <div className="flex-1 min-w-0 flex justify-center">
+          <div className="w-full max-w-xs text-center">
             <p className="font-display font-extrabold text-4xl md:text-5xl">
               {accumulatedMg}
               <span className="text-lg md:text-xl font-semibold text-muted dark:text-muted-dark ml-1">mg</span>
