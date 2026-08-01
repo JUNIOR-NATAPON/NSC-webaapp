@@ -1,10 +1,8 @@
-import { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { ChevronLeft, CheckCircle2, Search, XCircle } from 'lucide-react'
 import Card from '../components/Card.jsx'
 import Badge from '../components/Badge.jsx'
-import { useAuth } from '../context/AuthContext.jsx'
-import { subscribeToUserDevices } from '../lib/firestore.js'
+import { useDevice } from '../context/DeviceContext.jsx'
 
 const statusMeta = {
   connected: { label: 'Connected', tone: 'clean', icon: CheckCircle2 },
@@ -14,13 +12,7 @@ const statusMeta = {
 
 export default function Device() {
   const navigate = useNavigate()
-  const { user } = useAuth()
-  const [devices, setDevices] = useState([])
-
-  useEffect(() => {
-    if (!user) return
-    return subscribeToUserDevices(user.uid, setDevices)
-  }, [user])
+  const { devices } = useDevice()
 
   return (
     <div className="space-y-6 md:max-w-lg lg:max-w-2xl">
@@ -33,7 +25,7 @@ export default function Device() {
 
       <Card className="p-0 overflow-hidden">
         {devices.length === 0 ? (
-          <p className="text-sm text-muted px-5 py-4">
+          <p className="text-sm text-muted dark:text-muted-dark px-5 py-4">
             No devices paired yet. Follow the pairing steps on your Clarity hardware to connect one.
           </p>
         ) : (
@@ -44,15 +36,13 @@ export default function Device() {
               <div
                 key={d.id}
                 className={`flex items-center justify-between px-5 py-4 ${
-                  i !== devices.length - 1 ? 'border-b border-black/5' : ''
+                  i !== devices.length - 1 ? 'border-b border-black/5 dark:border-white/10' : ''
                 }`}
               >
                 <span className="flex items-center gap-3 text-sm font-medium">
                   <Icon
                     size={18}
-                    className={
-                      meta.tone === 'clean' ? 'text-clean' : meta.tone === 'warn' ? 'text-warn' : 'text-danger'
-                    }
+                    className={meta.tone === 'clean' ? 'text-clean' : meta.tone === 'warn' ? 'text-warn' : 'text-danger'}
                   />
                   {d.name}
                 </span>

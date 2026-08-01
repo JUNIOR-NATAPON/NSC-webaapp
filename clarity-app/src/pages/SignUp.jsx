@@ -1,8 +1,8 @@
 import { Link, useNavigate } from 'react-router-dom'
 import { Mail, User, Lock } from 'lucide-react'
 import { useState } from 'react'
-import { useAuth } from '../context/AuthContext.jsx'
 import logo from '../assets/logo.png'
+import { useAuth } from '../context/AuthContext.jsx'
 
 function firebaseErrorMessage(err) {
   switch (err.code) {
@@ -53,10 +53,14 @@ export default function SignUp() {
   }
 
   return (
-    <div className="min-h-screen flex items-center justify-center px-6 py-10 bg-surface">
+    <div className="min-h-screen flex items-center justify-center px-6 py-10 bg-surface dark:bg-surface-dark bg-[radial-gradient(circle_at_50%_-10%,_#EAF0FE_0%,_transparent_55%)] dark:bg-[radial-gradient(circle_at_50%_-10%,_rgba(42,95,224,0.18)_0%,_transparent_55%)]">
       <div className="w-full max-w-sm md:max-w-md lg:max-w-lg">
         <div className="flex flex-col items-center mb-8">
-          <img src={logo} alt="Clarity — smart water bottle cap" className="w-60 md:w-72 object-contain" />
+          <img
+            src={logo}
+            alt="Clarity — smart water bottle cap"
+            className="w-40 md:w-48 object-contain dark:brightness-0 dark:invert"
+          />
         </div>
 
         {error && (
@@ -78,7 +82,7 @@ export default function SignUp() {
           </button>
         </form>
 
-        <p className="text-center text-sm text-muted mt-6">
+        <p className="text-center text-sm text-muted dark:text-muted-dark mt-6">
           Already have an account?{' '}
           <Link to="/login" className="text-brand font-semibold">
             Log in
@@ -90,18 +94,20 @@ export default function SignUp() {
 }
 
 function Field({ icon: Icon, label, type, placeholder, value, onChange }) {
+  const id = `signup-${label.toLowerCase().replace(/\s+/g, '-')}`
   return (
     <div>
-      <label className="block text-sm font-semibold mb-1.5">{label}</label>
+      <label htmlFor={id} className="block text-sm font-semibold mb-1.5">{label}</label>
       <div className="relative">
-        <Icon size={18} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-muted" />
+        <Icon size={18} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-muted dark:text-muted-dark" />
         <input
+          id={id}
           type={type}
           required
           value={value}
           onChange={onChange}
           placeholder={placeholder}
-          className="w-full rounded-xl border border-black/10 bg-white pl-11 pr-4 py-3 md:py-3.5 text-sm md:text-base focus:border-brand outline-none"
+          className="w-full rounded-xl border border-black/10 dark:border-white/10 bg-white dark:bg-card-dark pl-11 pr-4 py-3 md:py-3.5 text-sm md:text-base focus:border-brand outline-none"
         />
       </div>
     </div>

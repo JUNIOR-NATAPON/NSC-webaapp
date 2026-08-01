@@ -1,5 +1,6 @@
 /** @type {import('tailwindcss').Config} */
 export default {
+  darkMode: 'class',
   content: ['./index.html', './src/**/*.{js,jsx}'],
   theme: {
     extend: {
@@ -21,9 +22,18 @@ export default {
           DEFAULT: '#E5484D',
           bg: '#FCE6E7'
         },
-        surface: '#F6F8FC',
+        surface: {
+          DEFAULT: '#F6F8FC',
+          dark: '#0F1420'
+        },
+        card: {
+          dark: '#1B2236'
+        },
         ink: '#12172B',
-        muted: '#6B7280'
+        muted: {
+          DEFAULT: '#6B7280',
+          dark: '#9AA7BD'
+        }
       },
       fontFamily: {
         display: ['"Poppins"', 'sans-serif'],

@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { ChevronLeft } from 'lucide-react'
 import Card from '../components/Card.jsx'
+import { useToast } from '../context/ToastContext.jsx'
 import { useAuth } from '../context/AuthContext.jsx'
 import { subscribeToUserProfile, updateNotificationSettings } from '../lib/firestore.js'
 
@@ -10,13 +11,13 @@ const labels = {
   highNtu: 'High NTU alert',
   dailySummary: 'Daily summary'
 }
-const defaultSettings = { filterLow: true, highNtu: true, dailySummary: true }
+const defaultSettings = { filterLow: true, highNtu: true, dailySummary: false }
 
 export default function Notification() {
   const navigate = useNavigate()
   const { user } = useAuth()
+  const { showToast } = useToast()
   const [settings, setSettings] = useState(defaultSettings)
-  const [saving, setSaving] = useState(false)
 
   useEffect(() => {
     if (!user) return
@@ -28,13 +29,12 @@ export default function Notification() {
   async function toggle(key) {
     const next = { ...settings, [key]: !settings[key] }
     setSettings(next) // update immediately so the switch feels instant
-    setSaving(true)
+    showToast(`${labels[key]} turned ${next[key] ? 'on' : 'off'}`)
     try {
       await updateNotificationSettings(user.uid, next)
     } catch (err) {
       setSettings(settings) // revert on failure
-    } finally {
-      setSaving(false)
+      showToast('Could not save — please try again')
     }
   }
 
@@ -45,7 +45,6 @@ export default function Notification() {
           <ChevronLeft size={22} />
         </button>
         <h1 className="font-display font-bold text-xl md:text-2xl lg:text-3xl">Notification</h1>
-        {saving && <span className="text-xs text-muted ml-2">Saving...</span>}
       </div>
 
       <Card className="p-0 overflow-hidden">
@@ -53,7 +52,7 @@ export default function Notification() {
           <div
             key={key}
             className={`flex items-center justify-between px-5 py-4 ${
-              i !== Object.keys(labels).length - 1 ? 'border-b border-black/5' : ''
+              i !== Object.keys(labels).length - 1 ? 'border-b border-black/5 dark:border-white/10' : ''
             }`}
           >
             <span className="text-sm font-medium">{labels[key]}</span>
@@ -71,7 +70,7 @@ function Switch({ on, onClick }) {
       onClick={onClick}
       aria-pressed={on}
       className={`h-7 w-12 rounded-full transition-colors shrink-0 flex items-center p-0.5 ${
-        on ? 'bg-brand justify-end' : 'bg-black/15 justify-start'
+        on ? 'bg-brand justify-end' : 'bg-black/15 dark:bg-white/15 justify-start'
       }`}
     >
       <span className="h-6 w-6 bg-white rounded-full shadow transition-all" />

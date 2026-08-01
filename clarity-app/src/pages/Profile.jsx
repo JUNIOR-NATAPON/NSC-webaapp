@@ -37,31 +37,31 @@ export default function Profile() {
         <h1 className="font-display font-bold text-xl md:text-2xl lg:text-3xl">
           {profile?.username || user?.displayName || 'User'}
         </h1>
-        <p className="text-sm text-muted">{user?.email}</p>
+        <p className="text-sm text-muted dark:text-muted-dark">{user?.email}</p>
       </div>
 
       <Card className="p-0 overflow-hidden">
-        <p className="text-sm font-semibold px-5 pt-4 pb-2 text-muted">Setting</p>
+        <p className="text-sm font-semibold px-5 pt-4 pb-2 text-muted dark:text-muted-dark">Setting</p>
         {items.map(({ label, icon: Icon, to }, i) => (
           <button
             key={label}
             onClick={() => navigate(to)}
-            className={`w-full flex items-center justify-between px-5 py-4 text-sm font-medium hover:bg-surface transition-colors ${
-              i !== items.length - 1 ? 'border-b border-black/5' : ''
+            className={`w-full flex items-center justify-between px-5 py-4 text-sm font-medium hover:bg-surface dark:hover:bg-white/5 transition-colors ${
+              i !== items.length - 1 ? 'border-b border-black/5 dark:border-white/10' : ''
             }`}
           >
             <span className="flex items-center gap-3">
-              <Icon size={18} className="text-muted" />
+              <Icon size={18} className="text-muted dark:text-muted-dark" />
               {label}
             </span>
-            <ChevronRight size={16} className="text-muted" />
+            <ChevronRight size={16} className="text-muted dark:text-muted-dark" />
           </button>
         ))}
       </Card>
 
       <button
         onClick={handleSignOut}
-        className="w-full flex items-center justify-center gap-2 border border-danger/30 text-danger rounded-xl py-3.5 font-semibold text-sm bg-white"
+        className="w-full flex items-center justify-center gap-2 border border-danger/30 text-danger rounded-xl py-3.5 font-semibold text-sm bg-white dark:bg-card-dark"
       >
         <LogOut size={16} />
         Sign Out

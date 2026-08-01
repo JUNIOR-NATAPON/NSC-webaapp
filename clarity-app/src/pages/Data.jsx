@@ -1,10 +1,8 @@
-import { useEffect, useState } from 'react'
 import { Link } from 'react-router-dom'
 import { History as HistoryIcon, ChevronRight } from 'lucide-react'
 import Card from '../components/Card.jsx'
 import Badge from '../components/Badge.jsx'
-import { useAuth } from '../context/AuthContext.jsx'
-import { subscribeToPrimaryDevice } from '../lib/firestore.js'
+import { useDevice } from '../context/DeviceContext.jsx'
 
 const guide = [
   { range: '0-4 NTU', label: 'clean, safe', tone: 'clean' },
@@ -12,33 +10,17 @@ const guide = [
   { range: '>10 NTU', label: 'high, filter need', tone: 'danger' }
 ]
 
-function toneForValue(v) {
-  if (v <= 4) return 'clean'
-  if (v <= 10) return 'warn'
-  return 'danger'
-}
-
-function labelForValue(v) {
-  if (v <= 4) return 'Clean'
-  if (v <= 10) return 'Moderate'
-  return 'High'
-}
-
 export default function Data() {
-  const { user } = useAuth()
-  const [device, setDevice] = useState(null)
+  const { device, loading } = useDevice()
 
-  useEffect(() => {
-    if (!user) return
-    return subscribeToPrimaryDevice(user.uid, setDevice)
-  }, [user])
+  if (loading) return <p className="text-sm text-muted dark:text-muted-dark">Loading...</p>
 
   if (!device) {
     return (
       <div className="space-y-6 md:max-w-lg lg:max-w-2xl">
         <h1 className="font-display font-bold text-xl md:text-2xl lg:text-3xl">Current turbidity</h1>
         <Card className="text-center py-10">
-          <p className="text-sm text-muted">No device paired yet.</p>
+          <p className="text-sm text-muted dark:text-muted-dark">No device paired yet.</p>
         </Card>
       </div>
     )
@@ -54,13 +36,13 @@ export default function Data() {
 
       <Card className="text-center">
         <p className="font-display font-extrabold text-6xl md:text-7xl lg:text-8xl mb-1">{after}</p>
-        <p className="text-sm text-muted mb-3">NTU</p>
-        <Badge tone={toneForValue(after)}>{labelForValue(after)}</Badge>
+        <p className="text-sm text-muted dark:text-muted-dark mb-3">NTU</p>
+        <Badge tone="clean">Clean</Badge>
       </Card>
 
       <Card>
-        <Row label="Before filter" value={`${before} NTU`} tone={toneForValue(before)} />
-        <Row label="After filter" value={`${after} NTU`} tone={toneForValue(after)} />
+        <Row label="Before filter" value={`${before} NTU`} tone="warn" />
+        <Row label="After filter" value={`${after} NTU`} tone="clean" />
         <Row label="Filter efficiency" value={`${efficiency}%`} tone="clean" isLast />
       </Card>
 
@@ -74,7 +56,7 @@ export default function Data() {
                   g.tone === 'clean' ? 'bg-clean' : g.tone === 'warn' ? 'bg-warn' : 'bg-danger'
                 }`}
               />
-              <span className="text-sm text-muted flex-1">
+              <span className="text-sm text-muted dark:text-muted-dark flex-1">
                 {g.range} - {g.label}
               </span>
             </div>
@@ -84,13 +66,13 @@ export default function Data() {
 
       <Link
         to="/history"
-        className="flex items-center justify-between bg-white rounded-2xl shadow-card px-5 py-4"
+        className="flex items-center justify-between bg-white dark:bg-card-dark rounded-2xl shadow-card dark:shadow-none px-5 py-4"
       >
         <span className="flex items-center gap-3 text-sm font-semibold">
-          <HistoryIcon size={18} className="text-muted" />
+          <HistoryIcon size={18} className="text-muted dark:text-muted-dark" />
           History
         </span>
-        <ChevronRight size={16} className="text-muted" />
+        <ChevronRight size={16} className="text-muted dark:text-muted-dark" />
       </Link>
     </div>
   )
@@ -98,8 +80,8 @@ export default function Data() {
 
 function Row({ label, value, tone, isLast }) {
   return (
-    <div className={`flex justify-between items-center py-2.5 ${!isLast ? 'border-b border-black/5' : ''}`}>
-      <span className="text-sm text-muted">{label}</span>
+    <div className={`flex justify-between items-center py-2.5 ${!isLast ? 'border-b border-black/5 dark:border-white/10' : ''}`}>
+      <span className="text-sm text-muted dark:text-muted-dark">{label}</span>
       <Badge tone={tone}>{value}</Badge>
     </div>
   )

@@ -1,21 +1,20 @@
-# Clarity — Water Filter Monitor
+# Clarity — Live App (Firebase-wired)
 
-A responsive React + Tailwind app, now wired to real Firebase: email/password +
-Google sign-in, a Firestore user profile, and live sensor readings from a
-paired device.
+This started as the no-login mockup design but is now fully wired to
+Firebase: email/password + Google sign-in, live device/sensor data, and
+persisted settings. All the new visual design (dark mode, animated body-fill
+microplastic gauge, radial filter gauge, toast notifications, delta/trend
+indicators) is preserved — only the data source changed, from
+`src/data/sampleData.js` to live Firestore reads.
 
 ## 1. Create a Firebase project
 
 1. Go to the [Firebase console](https://console.firebase.google.com) → **Add project**.
-2. In your project, go to **Build → Authentication → Get started**, and enable:
-   - **Email/Password**
-   - **Google** (optional, for "Continue with Google")
-3. Go to **Build → Firestore Database → Create database**. Start in **production mode**
-   (the rules file in this repo locks things down properly).
-4. Go to **Project settings → General → Your apps → Add app → Web**, register the
-   app, and copy the config values it gives you.
-5. In **Firestore → Rules**, paste in the contents of `firestore.rules` from this
-   project and publish.
+2. **Build → Authentication → Get started** → enable **Email/Password** and,
+   optionally, **Google**.
+3. **Build → Firestore Database → Create database** (production mode).
+4. **Project settings → General → Your apps → Add app → Web** → copy the config.
+5. **Firestore → Rules** → paste in `firestore.rules` from this repo and publish.
 
 ## 2. Configure the app
 
@@ -23,16 +22,10 @@ paired device.
 cp .env.example .env
 ```
 
-Fill in `.env` with the values from step 4:
-
-```
-VITE_FIREBASE_API_KEY=...
-VITE_FIREBASE_AUTH_DOMAIN=...
-VITE_FIREBASE_PROJECT_ID=...
-VITE_FIREBASE_STORAGE_BUCKET=...
-VITE_FIREBASE_MESSAGING_SENDER_ID=...
-VITE_FIREBASE_APP_ID=...
-```
+Fill in `.env` with your project's config (see `.env.example` for the full
+list of `VITE_FIREBASE_*` keys). Leave the `VITE_FIREBASE_DEVICE_*` keys
+blank unless you're using a separate Firebase project for device data — see
+that section further down.
 
 ## 3. Run it
 
@@ -41,20 +34,18 @@ npm install
 npm run dev
 ```
 
-Sign up for an account in the app — this creates a `users/{uid}` document in
-Firestore automatically. At this point Home/Data/Filter will show "No device
-paired yet" because no device is linked to your account.
+Sign up in the app — this creates your `users/{uid}` Firestore doc
+automatically. Home/Data/Filter will show "No device paired" until a device
+is linked to your account (next step).
 
-## 4. Pair a device (so Home/Data/History/Filter show real data)
+## 4. Pair a device
 
-Devices live in a top-level `devices` collection, linked to a user via
-`ownerUid`. Add one manually in the Firestore console to test the app before
-your hardware is sending data:
+Add a doc to Firestore manually to test before your hardware is ready:
 
 **`devices/{any-id}`**
 ```json
 {
-  "ownerUid": "<your user's uid, from Authentication tab>",
+  "ownerUid": "<your uid, from the Authentication tab>",
   "name": "Clarity-001",
   "status": "connected",
   "ntuBefore": 2.4,
@@ -63,65 +54,59 @@ your hardware is sending data:
 }
 ```
 
-Reload the app — Home, Data, and Filter will now show these numbers live.
-
-### Feeding it real sensor readings
-
-For the trend chart / History / recent log, push documents into that device's
-`readings` subcollection:
-
-**`devices/{deviceId}/readings/{any-id}`**
+Then push readings into `devices/{deviceId}/readings/{any-id}`:
 ```json
-{
-  "ntuBefore": 2.4,
-  "ntuAfter": 0.3,
-  "timestamp": <Firestore server timestamp>
-}
+{ "ntuBefore": 2.4, "ntuAfter": 0.3, "timestamp": <server timestamp> }
 ```
 
-And for the Filter page's log, push into `filterLog`:
-
-**`devices/{deviceId}/filterLog/{any-id}`**
+And filter-change events into `devices/{deviceId}/filterLog/{any-id}`:
 ```json
-{
-  "timestamp": <Firestore server timestamp>
-}
+{ "timestamp": <server timestamp> }
 ```
 
-Your actual hardware (ESP32/Raspberry Pi/etc.) should write to these same
-paths using the Firebase Admin SDK or REST API whenever it takes a reading —
-every page listens with `onSnapshot`, so the UI updates instantly with no
-polling or refresh needed.
+Your real hardware should write to these same paths on every reading /
+filter change. Every page listens live via `onSnapshot` — no polling, no
+refresh needed. There's also a `pushReading()` helper in `src/lib/firestore.js`
+for testing from a script.
 
-There's also a convenience helper for this in `src/lib/firestore.js`:
+## Using a separate Firebase project for device data (optional)
 
-```js
-import { pushReading } from './lib/firestore.js'
-await pushReading(deviceId, { ntuBefore: 2.4, ntuAfter: 0.3, filterPercentRemaining: 68 })
-```
-
-Handy for testing from a script, or wiring to a temporary "simulate reading"
-button while your hardware isn't ready yet.
+See `firestore-device-project.rules` and the `VITE_FIREBASE_DEVICE_*` keys
+in `.env.example`. This lets device/sensor data live in a completely
+separate Firebase project from user accounts. Worth knowing: Firebase Auth
+is scoped per-project, so the second project can't verify per-user
+ownership the way the primary one does — its rules allow any authenticated
+(anonymous) client to read/write any device. Fine for personal/hobby use;
+not a substitute for real per-user isolation across two projects (which
+would need custom auth tokens minted server-side).
 
 ## What's included
 
-- `src/lib/firebase.js` — Firebase app/auth/Firestore initialization
-- `src/lib/firestore.js` — all Firestore reads/writes, with the schema
-  documented at the top of the file
-- `src/context/AuthContext.jsx` — sign up, sign in (email + Google), sign out,
-  and the current user, available anywhere via `useAuth()`
-- `src/App.jsx` — routes are gated by `ProtectedRoute` (redirects to `/login`
-  if signed out) and `PublicOnlyRoute` (redirects a signed-in user away from
-  Login/Sign Up)
-- `src/pages/` — every page now reads live data instead of hardcoded values:
-  - **Home** — live NTU + trend chart from the primary device
-  - **Data** — live current turbidity + filter efficiency
-  - **History** — live stats + bar chart + recent log from `readings`
-  - **Filter** — live "need replacement" % + `filterLog`
-  - **Profile** — real signed-in user, real sign out
-  - **Notification** — toggle states persist to Firestore per user
-  - **Account** — edit username, view email, send password reset email
-  - **Device** — lists devices actually linked to your account
+- `src/lib/firebase.js` — Firebase app/auth/Firestore init (+ optional second project)
+- `src/lib/firestore.js` — all Firestore reads/writes, schema documented at the top
+- `src/lib/estimates.js` — derives the microplastic exposure estimate and
+  day-over-day deltas from real readings (clearly labeled as an estimate —
+  turbidity sensors don't measure microplastics directly)
+- `src/context/AuthContext.jsx` — sign up, sign in (email + Google), sign out
+- `src/context/DeviceContext.jsx` — single shared subscription to the
+  user's primary device, its devices list, readings, and filter log — used
+  by NavBar, TopBar, Home, Data, History, and Filter so there's only one
+  set of Firestore listeners per session, not one per page
+- `src/context/ThemeContext.jsx`, `ToastContext.jsx` — unchanged, no
+  Firebase involved (dark mode + toast notifications are local UI state)
+- `src/App.jsx` — routes gated by `ProtectedRoute` / `PublicOnlyRoute`
+- `src/data/sampleData.js` — no longer used anywhere; kept only as a
+  reference for the data shapes each page originally expected
+
+### Known simplifications
+
+- The "vs yesterday" Delta on Home's NTU tile and the Microplastic card
+  compares real day-over-day readings. The Filter page's "remaining %"
+  doesn't show a Delta — there's no historical log of
+  `filterPercentRemaining` in the schema, so a real comparison isn't
+  possible without adding one.
+- `estimateMicroplasticExposure` is a documented illustrative estimate
+  (see comments in `src/lib/estimates.js`), not a scientific measurement.
 
 ## Build for production
 
@@ -129,6 +114,5 @@ button while your hardware isn't ready yet.
 npm run build
 ```
 
-Outputs static files to `dist/`, deployable to Vercel, Netlify, GitHub Pages, etc.
-Remember to set the same `VITE_FIREBASE_*` environment variables in your
-hosting provider's dashboard — `.env` files aren't uploaded.
+Set the same `VITE_FIREBASE_*` env vars in your hosting provider's
+dashboard (e.g. Vercel) — `.env` isn't uploaded with your code.

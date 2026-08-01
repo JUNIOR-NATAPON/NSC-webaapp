@@ -1,4 +1,9 @@
 rules_version = '2';
+// Default setup: user accounts AND device data in the same project.
+// If you're using a separate Firebase project for device data (see
+// VITE_FIREBASE_DEVICE_* in .env.example), use firestore-device-project.rules
+// for that second project instead — the `devices` rules below then simply
+// go unused, which is harmless.
 service cloud.firestore {
   match /databases/{database}/documents {
 

@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom'
 import { ChevronLeft, User, Lock, Mail, Check } from 'lucide-react'
 import { sendPasswordResetEmail, updateProfile } from 'firebase/auth'
 import Card from '../components/Card.jsx'
+import { useToast } from '../context/ToastContext.jsx'
 import { useAuth } from '../context/AuthContext.jsx'
 import { auth } from '../lib/firebase.js'
 import { subscribeToUserProfile, updateUserProfile } from '../lib/firestore.js'
@@ -10,10 +11,10 @@ import { subscribeToUserProfile, updateUserProfile } from '../lib/firestore.js'
 export default function Account() {
   const navigate = useNavigate()
   const { user } = useAuth()
+  const { showToast } = useToast()
   const [username, setUsername] = useState('')
   const [saving, setSaving] = useState(false)
   const [saved, setSaved] = useState(false)
-  const [resetSent, setResetSent] = useState(false)
 
   useEffect(() => {
     if (!user) return
@@ -31,6 +32,7 @@ export default function Account() {
       await updateUserProfile(user.uid, { username })
       await updateProfile(auth.currentUser, { displayName: username })
       setSaved(true)
+      showToast('Account changes saved')
     } finally {
       setSaving(false)
     }
@@ -38,7 +40,7 @@ export default function Account() {
 
   async function handlePasswordReset() {
     await sendPasswordResetEmail(auth, user.email)
-    setResetSent(true)
+    showToast('Password reset email sent')
   }
 
   return (
@@ -52,38 +54,38 @@ export default function Account() {
 
       <Card className="space-y-5">
         <div>
-          <label className="block text-sm font-semibold mb-1.5">Username</label>
+          <label htmlFor="account-username" className="block text-sm font-semibold mb-1.5">Username</label>
           <div className="relative">
-            <User size={18} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-muted" />
+            <User size={18} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-muted dark:text-muted-dark" />
             <input
+              id="account-username"
               value={username}
               onChange={(e) => setUsername(e.target.value)}
-              className="w-full rounded-xl border border-black/10 bg-surface pl-11 pr-4 py-3 text-sm focus:border-brand outline-none"
+              className="w-full rounded-xl border border-black/10 dark:border-white/10 bg-surface dark:bg-white/5 pl-11 pr-4 py-3 text-sm focus:border-brand outline-none"
             />
           </div>
         </div>
-
         <div>
-          <label className="block text-sm font-semibold mb-1.5">Email</label>
+          <label htmlFor="account-email" className="block text-sm font-semibold mb-1.5">Email</label>
           <div className="relative">
-            <Mail size={18} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-muted" />
+            <Mail size={18} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-muted dark:text-muted-dark" />
             <input
+              id="account-email"
               value={user?.email || ''}
               disabled
-              className="w-full rounded-xl border border-black/10 bg-black/5 pl-11 pr-4 py-3 text-sm text-muted"
+              className="w-full rounded-xl border border-black/10 dark:border-white/10 bg-black/5 dark:bg-white/5 pl-11 pr-4 py-3 text-sm text-muted dark:text-muted-dark"
             />
           </div>
         </div>
-
         <div>
           <label className="block text-sm font-semibold mb-1.5">Password</label>
           <button
             type="button"
             onClick={handlePasswordReset}
-            className="w-full flex items-center gap-3 rounded-xl border border-black/10 bg-surface pl-4 pr-4 py-3 text-sm text-left hover:bg-black/5 transition-colors"
+            className="w-full flex items-center gap-3 rounded-xl border border-black/10 dark:border-white/10 bg-surface dark:bg-white/5 hover:bg-black/5 dark:hover:bg-white/10 transition-colors pl-4 pr-4 py-3 text-sm text-left"
           >
-            <Lock size={18} className="text-muted" />
-            {resetSent ? 'Reset email sent — check your inbox' : 'Send password reset email'}
+            <Lock size={18} className="text-muted dark:text-muted-dark" />
+            Send password reset email
           </button>
         </div>
       </Card>
